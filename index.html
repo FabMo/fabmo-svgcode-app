@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"/>
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.css">
+
+
+
+<script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/libs/fabmo.js"></script>
+    <script type="text/javascript">
+        var fabmo = new FabMoDashboard();
+    </script>
+<script src="js/control.js"></script>
+<script src="js/config.js"></script>
+<script src="js/jquery.mobile-1.4.5.js"></script>
+<script src="js/processing.min.js"></script>
+<script src="js/opentype.min.js"></script>
+<script src="js/snap.svg-min.js"></script>
+<script src="js/clipper.js"></script>
+<script src="js/flatten.js"></script>
+
+
+<style>
+
+#loadfont {
+  position: relative;
+  overflow: hidden;
+  float: center;
+  margin-right: 4px;
+}
+#loadfont input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  direction: ltr;
+  cursor: pointer;
+}
+
+#svg{
+
+position: absolute;
+left: -9999px;
+top: -9999px;
+
+}
+
+
+</style>
+</head>
+
+<div id="shape">
+<svg id="svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.0"
+   width="400"
+   height="380"
+   id="svg2">
+  <path
+     d="M 151.34904,307.20455 L 264.34904,307.20455 C 264.34904,291.14096 263.2021,287.95455 236.59904,287.95455 C 240.84904,275.20455 258.12424,244.35808 267.72404,244.35808 C 276.21707,244.35808 286.34904,244.82592 286.34904,264.20455 C 286.34904,286.20455 323.37171,321.67547 332.34904,307.20455 C 345.72769,285.63897 309.34904,292.21514 309.34904,240.20455 C 309.34904,169.05135 350.87417,179.18071 350.87417,139.20455 C 350.87417,119.20455 345.34904,116.50374 345.34904,102.20455 C 345.34904,83.30695 361.99717,84.403577 358.75805,68.734879 C 356.52061,57.911656 354.76962,49.23199 353.46516,36.143889 C 352.53959,26.857305 352.24452,16.959398 342.59855,17.357382 C 331.26505,17.824992 326.96549,37.77419 309.34904,39.204549 C 291.76851,40.631991 276.77834,24.238028 269.97404,26.579549 C 263.22709,28.901334 265.34904,47.204549 269.34904,60.204549 C 275.63588,80.636771 289.34904,107.20455 264.34904,111.20455 C 239.34904,115.20455 196.34904,119.20455 165.34904,160.20455 C 134.34904,201.20455 135.49342,249.3212 123.34904,264.20455 C 82.590696,314.15529 40.823919,293.64625 40.823919,335.20455 C 40.823919,353.81019 72.349045,367.20455 77.349045,361.20455 C 82.349045,355.20455 34.863764,337.32587 87.995492,316.20455 C 133.38711,298.16014 137.43914,294.47663 151.34904,307.20455 z "/>
+</svg> 
+</div>
+
+
+<body onload="load()">
+
+<div data-role="page" id="pageone">
+  <div data-role="header">
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-info ui-btn-icon-left" onclick="info();">JOB INFO</a> 
+    <h1>LOAD SVG</h1>
+
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();" class="ui-btn-active ui-state-persist">SVGcode</a></li>
+
+      </ul>
+    </div>
+  </div>
+  
+  <div data-role="main" class="ui-content">
+
+
+
+
+    <canvas id="2D" tabindex="1"> </canvas>
+
+  </div>
+  <div data-role="footer" style="text-align:center;">
+
+    <span class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" id="loadfont" onchange="startRead()">
+       <span>LOAD SVG</span>
+       <input type="file" name="files[]" id="file" multiple data-role="none"/>
+    </span>
+
+
+      <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
+  </div>
+</div> 
+
+
+<div data-role="page" id="pagezero">
+  <div data-role="header">
+    <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-eye ui-btn-icon-left" onclick="toggleFullScreen();">FULLSCREEN</a>
+    <h1>SETUP</h1>
+
+    <div data-role="navbar">
+      <ul>
+        <li><a href="#pagezero" class="ui-btn-active ui-state-persist">SETUP</a></li>
+        <li><a href="#pageone" onclick="reload();">SVGcode</a></li>
+
+      </ul>
+    </div>
+  </div>
+  <div data-role="main" class="ui-content">
+
+    <form method="post">
+      <fieldset class="ui-field-contain">
+        <label for="material">MATERIAL TYPE</label>
+        <select name="material" id="material">
+          <option value="feed:1000,plunge:200" selected>PLYWOOD</option>
+        </select>
+      </fieldset>
+    </form>
+
+</div>
+  <div data-role="footer" style="text-align:center;">
+
+    <a href="#pageone" class="ui-btn ui-corner-all ui-shadow ui-icon-carat-r ui-btn-icon-right">SVGode</a>
+  </div>
+</div> 
+
+
+
+
+<script type="application/processing" data-processing-target="2D">
+
+
+int verts = 100;
+int radius = 40;
+int sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
+int sf = 1;
+int sfx = 1;
+int x = 0;
+int y = 0;
+
+void setup(){
+   size($(window).innerWidth()-30,$(window).innerHeight()-180);
+   background(235);
+   noFill();
+   smooth();  
+   frameRate(2);
+   strokeCap(ROUND);
+   strokeWeight(1);
+   textFont(createFont("Arial",6));
+}
+
+void draw(){
+background(235);
+
+
+size($(window).innerWidth()-30,$(window).innerHeight()-180);
+
+sf=(height/((ymax-ymin)+20))
+strokeWeight(1);
+
+scale(sf);
+translate(-xmin+10,-ymin+10);
+
+stroke(0);
+fill(0,0,200,110);
+
+for(i=0;i<dots.length;i++){
+
+beginShape();
+   for(j=0;j<dots[i].length;j++){
+           vertex(dots[i][j].X,dots[i][j].Y);
+   }
+endShape();
+}
+
+noFill();
+beginShape();
+vertex(xmin,ymin);
+vertex(xmax,ymin);
+vertex(xmax,ymax);
+vertex(xmin,ymax);
+vertex(xmin,ymin);
+endShape();
+
+
+}
+
+
+</script>
+
+<script>
+
+var g = ""
+
+var points = []
+var tool_diameter
+var SVG = []
+
+var xmin
+var xmax
+var ymin
+var ymax
+var dots = []
+var image = ({name:"cat.svg"})
+
+function make(){
+
+//material = eval('({' + (document.getElementById("material").value) + '})')
+
+g=""
+
+g+="g21\n"
+g+="g0z5\n"
+g+="m4\n"
+g+="g4p2\n"
+g+="g1f1000\n"
+
+for(i=0;i<dots.length;i++){
+
+   for(j=0;j<dots[i].length;j++){
+           if(j==0){
+           g+="g0x"+(dots[i][j].X-xmin).toFixed(2)+"y"+((ymax-ymin)+(ymin-(dots[i][j].Y))).toFixed(2) + "\n"
+           g+="g1z-2f200\n"
+           }
+           else{
+           g+="g1x"+(dots[i][j].X-xmin).toFixed(2)+"y"+((ymax-ymin)+(ymin-(dots[i][j].Y))).toFixed(2) + "f1000\n"
+           }
+   }
+}
+
+
+g+="m5\n"
+g+="m30\n"
+
+//console.log(g);
+
+fabmo.submitJob({
+   file : g,
+   filename : image.name + '.g',
+   name : image.name,
+   description : ((xmax-xmin).toFixed(2))+" x "+((ymax-ymin).toFixed(2))+" mm"
+});
+
+}
+
+function info(){
+
+if(image!=null){
+   alert(image.name + "\nwidth: " + (xmax-xmin).toFixed(2) + " mm\nheight: " + (ymax-ymin).toFixed(2) + " mm")
+}
+else{
+   alert('no image loaded')
+}
+
+}
+
+function load(){
+
+//alert("svgcode")
+svg2pg()
+
+}
+
+
+function startRead() {
+    image = document.getElementById("file").files[0];
+   
+
+    if (image) {
+        if (image.type.match("/svg/*")) {
+            getAsImage(image);
+        }
+        else {
+              alert(image.name + " IS NOT A SVG FILE");
+        }
+    }
+
+}
+
+function getAsImage(readFile) {
+    var reader = new FileReader();
+    reader.readAsDataURL(readFile);
+    reader.onload = addImg;
+}
+
+function addImg(imgsrc) {
+
+
+SVG2 = imgsrc.target.result
+SVG2 = SVG2.slice(SVG2.indexOf(",")+1)
+SVG2 = window.atob(SVG2)
+
+SVG2 = SVG2.slice((SVG2.indexOf('<svg')),(SVG2.indexOf('</svg>'))+6)
+SVG2 = SVG2.replace('<svg','<svg id="svg"')
+
+console.log(SVG2)
+
+$( "#svg" ).replaceWith(SVG2);
+
+svg2pg()
+
+}
+
+
+function svg2pg(){
+
+svg_paths=[]
+SVG = []
+SVG2 = []
+dots = []
+
+
+flatten(document.getElementById('svg'));
+
+console.log(svg_paths)
+
+
+   for(i=0;i<svg_paths.length;i++){
+   SVG.push([])
+      for(j=0;j<svg_paths[i].length;j++){
+
+      SVG[i]+=(svg_paths[i][j])
+
+      }
+   }
+ 
+//console.log(SVG)
+
+for(i=0;i<SVG.length;i++){
+
+   dots.push([])
+   //console.log(parseInt(Snap.path.getTotalLength(SVG[i])))   
+   for(j=0;j<(parseInt(Snap.path.getTotalLength(SVG[i])));j=j+2){
+      dots[i].push({X:Snap.path.getPointAtLength(SVG[i], j).x,Y:Snap.path.getPointAtLength(SVG[i], j).y})   
+   }
+
+dots[i].push({X:Snap.path.getPointAtLength(SVG[i], 0).x,Y:Snap.path.getPointAtLength(SVG[i], 0).y})
+
+}
+
+//console.log(dots)
+
+xmin = []
+xmax = []
+ymin = []
+ymax = []
+
+   for(i=0;i<dots.length;i++){
+      for(j=0;j<dots[i].length;j++){
+      xmax.push(dots[i][j].X)
+      xmin.push(dots[i][j].X)
+      ymax.push(dots[i][j].Y)
+      ymin.push(dots[i][j].Y)
+      }
+   }
+xmax = Math.max.apply(Math, xmax)
+xmin = Math.min.apply(Math, xmin)
+ymax = Math.max.apply(Math, ymax)
+ymin = Math.min.apply(Math, ymin)
+
+
+
+}
+
+
+// toggle full screen
+function toggleFullScreen() {
+  if (!document.fullscreenElement &&    // alternative standard method
+      !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen()
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen()
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
+    }
+  } else {
+    if (document.cancelFullScreen) {
+      document.cancelFullScreen()
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen()
+    } else if (document.webkitCancelFullScreen) {
+      document.webkitCancelFullScreen()
+    }
+  }
+}
+
+</script>
+
+
+</body>
+</html>
+

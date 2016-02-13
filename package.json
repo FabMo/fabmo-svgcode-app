@@ -1,0 +1,10 @@
+{
+	"name":"SVGcode",
+	"main":"./index.html",
+	"icon":"icon.png",
+	"icon_color":"white",
+	"version":"0.0.2",
+	"author":"Jonathan Ward",
+	"website":"http://github.com/FabMo/",
+	"description":"SVGcode"
+}
