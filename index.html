@@ -95,11 +95,14 @@ top: -9999px;
   </div>
   <div data-role="footer" style="text-align:center;">
 
+
+
     <span class="ui-btn ui-corner-all ui-shadow ui-icon-plus ui-btn-icon-left" id="loadfont" onchange="startRead()">
        <span>LOAD SVG</span>
        <input type="file" name="files[]" id="file" multiple data-role="none"/>
     </span>
 
+<a href="#" id="resize" class="ui-btn ui-corner-all ui-shadow ui-icon-gear ui-btn-icon-left">RESIZE</a>
 
       <a href="#" class="ui-btn ui-corner-all ui-shadow ui-icon-action ui-btn-icon-right" onclick="make();">SUBMIT JOB</a>
   </div>
@@ -143,13 +146,9 @@ top: -9999px;
 <script type="application/processing" data-processing-target="2D">
 
 
-int verts = 100;
-int radius = 40;
-int sf2 = abs($(window).innerHeight()-180)/(abs(ymax-ymin)+25);
+
 int sf = 1;
-int sfx = 1;
-int x = 0;
-int y = 0;
+
 
 void setup(){
    size($(window).innerWidth()-30,$(window).innerHeight()-180);
@@ -171,20 +170,28 @@ size($(window).innerWidth()-30,$(window).innerHeight()-180);
 sf=(height/((ymax-ymin)+20))
 strokeWeight(1);
 
+
+
+
 scale(sf);
+
+
 translate(-xmin+10,-ymin+10);
+
 
 stroke(0);
 fill(0,0,200,110);
 
-for(i=0;i<dots.length;i++){
 
+for(i=0;i<dots.length;i++){
 beginShape();
    for(j=0;j<dots[i].length;j++){
            vertex(dots[i][j].X,dots[i][j].Y);
    }
 endShape();
 }
+
+stroke(0,80);
 
 noFill();
 beginShape();
@@ -195,6 +202,13 @@ vertex(xmin,ymax);
 vertex(xmin,ymin);
 endShape();
 
+textSize(14/sf);
+
+text(((xmax-xmin)/sf2).toFixed(2) + ' x ' + ((ymax-ymin)/sf2).toFixed(2) + ' mm',(xmax+5),(ymax));
+
+
+fill(255,255,0);
+ellipse(xmin,ymax,5,5);
 
 }
 
@@ -215,6 +229,8 @@ var ymin
 var ymax
 var dots = []
 var image = ({name:"cat.svg"})
+var sf2 = 1
+var target_width
 
 function make(){
 
@@ -232,11 +248,11 @@ for(i=0;i<dots.length;i++){
 
    for(j=0;j<dots[i].length;j++){
            if(j==0){
-           g+="g0x"+(dots[i][j].X-xmin).toFixed(2)+"y"+((ymax-ymin)+(ymin-(dots[i][j].Y))).toFixed(2) + "\n"
+           g+="g0x"+((dots[i][j].X-xmin)/sf2).toFixed(2)+"y"+(((ymax-ymin)/sf2)+((ymin-(dots[i][j].Y))/sf2)).toFixed(2) + "\n"
            g+="g1z-2f200\n"
            }
            else{
-           g+="g1x"+(dots[i][j].X-xmin).toFixed(2)+"y"+((ymax-ymin)+(ymin-(dots[i][j].Y))).toFixed(2) + "f1000\n"
+           g+="g1x"+((dots[i][j].X-xmin)/sf2).toFixed(2)+"y"+(((ymax-ymin)/sf2)+((ymin-(dots[i][j].Y))/sf2)).toFixed(2) + "f1000\n"
            }
    }
 
@@ -254,7 +270,7 @@ fabmo.submitJob({
    file : g,
    filename : image.name + '.g',
    name : image.name,
-   description : ((xmax-xmin).toFixed(2))+" x "+((ymax-ymin).toFixed(2))+" mm"
+   description : (((xmax-xmin)/sf2).toFixed(2))+" x "+(((ymax-ymin)/sf2).toFixed(2))+" mm"
 });
 
 }
@@ -264,7 +280,7 @@ function info(){
 console.log(SVG[0])
 
 if(image!=null){
-   alert(image.name + "\nwidth: " + (xmax-xmin).toFixed(2) + " mm\nheight: " + (ymax-ymin).toFixed(2) + " mm")
+   alert(image.name + "\nwidth: " + ((xmax-xmin)/sf2).toFixed(2) + " mm\nheight: " + ((ymax-ymin)/sf2).toFixed(2) + " mm")
 }
 else{
    alert('no image loaded')
@@ -374,7 +390,7 @@ for(i=0;i<SVG2.length;i++){
       if((SVG2[i][j].startsWith('m')==false) && (SVG2[i][j].startsWith('M')==false)){
       SVG2[i][j] = ("m" + SVG2[i][j])
       }
-      if((SVG2[i][j].endsWith('z')==false) && (SVG2[i][j].startsWith('Z')==false)){
+      if((SVG2[i][j].endsWith('z')==false) && (SVG2[i][j].endsWith('Z')==false)){
       SVG2[i][j] = (SVG2[i][j]+'z')
       }
 
@@ -384,28 +400,15 @@ for(i=0;i<SVG2.length;i++){
 
 }
 
-//SVG2 = SVG2[0]
-console.log(SVG)
 
-/*
-for(i=0;i<SVG2.length;i++){
-   if (!SVG2[i].length){
-   console.log(i)
-   SVG2.splice(i,1)
-   i=i-1
-   }   
-}
-*/
+console.log(SVG[0])
 
-//console.log(SVG2)
-
-//console.log(SVG)
 
 for(i=0;i<SVG.length;i++){
 
    dots.push([])
    //console.log(parseInt(Snap.path.getTotalLength(SVG[i])))   
-   for(j=0;j<(parseInt(Snap.path.getTotalLength(SVG[i])));j=j+2){
+   for(j=0;j<(parseInt(Snap.path.getTotalLength(SVG[i])));j=j+3){
       dots[i].push({X:Snap.path.getPointAtLength(SVG[i], j).x,Y:Snap.path.getPointAtLength(SVG[i], j).y})   
    }
 
@@ -436,6 +439,20 @@ ymin = Math.min.apply(Math, ymin)
 
 
 }
+
+
+$( "#resize" ).click(function() {
+
+   target_width = eval(window.prompt("ENTER NEW WIDTH (MM)"))
+
+   if((target_width!=null)){
+      sf2 = ((xmax-xmin)/target_width)
+   }
+   else{
+      sf2 = sf2
+   }
+   
+});
 
 
 // toggle full screen
