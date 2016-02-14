@@ -19,7 +19,7 @@
 <script src="js/snap.svg-min.js"></script>
 <script src="js/clipper.js"></script>
 <script src="js/flatten.js"></script>
-
+<script src="js/raphael-min.js"></script>
 
 <style>
 
@@ -261,6 +261,8 @@ fabmo.submitJob({
 
 function info(){
 
+console.log(SVG[0])
+
 if(image!=null){
    alert(image.name + "\nwidth: " + (xmax-xmin).toFixed(2) + " mm\nheight: " + (ymax-ymin).toFixed(2) + " mm")
 }
@@ -309,7 +311,7 @@ SVG2 = window.atob(SVG2)
 SVG2 = SVG2.slice((SVG2.indexOf('<svg')),(SVG2.indexOf('</svg>'))+6)
 SVG2 = SVG2.replace('<svg','<svg id="svg"')
 
-console.log(SVG2)
+//console.log(SVG2)
 
 $( "#svg" ).replaceWith(SVG2);
 
@@ -328,7 +330,7 @@ dots = []
 
 flatten(document.getElementById('svg'));
 
-console.log(svg_paths)
+//console.log(svg_paths)
 
 
    for(i=0;i<svg_paths.length;i++){
@@ -340,6 +342,63 @@ console.log(svg_paths)
       }
    }
  
+//console.log(SVG)
+svg_paths=[]
+//Raphael._pathToAbsolute(path_string_rel);
+for(i=0;i<SVG.length;i++){
+    svg_paths[i]=Raphael._pathToAbsolute(SVG[i]);    
+}
+SVG=[]
+
+   for(i=0;i<svg_paths.length;i++){
+   SVG.push([])
+      for(j=0;j<svg_paths[i].length;j++){
+
+      SVG[i]+=(svg_paths[i][j])
+
+      }
+   }
+
+
+//console.log(SVG)
+
+for(i=0;i<SVG.length;i++){
+    SVG2.push(SVG[i].split(/.m./gi))     
+}
+
+SVG=[]
+
+for(i=0;i<SVG2.length;i++){
+   for(j=0;j<SVG2[i].length;j++){
+      
+      if((SVG2[i][j].startsWith('m')==false) || (SVG2[i][j].startsWith('M')==false)){
+      SVG2[i][j] = ("m" + SVG2[i][j])
+      }
+      if((SVG2[i][j].endsWith('z')==false) || (SVG2[i][j].startsWith('Z')==false)){
+      SVG2[i][j] = (SVG2[i][j]+'z')
+      }
+
+      SVG.push(SVG2[i][j])
+
+   }
+
+}
+
+//SVG2 = SVG2[0]
+console.log(SVG)
+
+/*
+for(i=0;i<SVG2.length;i++){
+   if (!SVG2[i].length){
+   console.log(i)
+   SVG2.splice(i,1)
+   i=i-1
+   }   
+}
+*/
+
+//console.log(SVG2)
+
 //console.log(SVG)
 
 for(i=0;i<SVG.length;i++){
