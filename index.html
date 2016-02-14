@@ -371,10 +371,10 @@ SVG=[]
 for(i=0;i<SVG2.length;i++){
    for(j=0;j<SVG2[i].length;j++){
       
-      if((SVG2[i][j].startsWith('m')==false) || (SVG2[i][j].startsWith('M')==false)){
+      if((SVG2[i][j].startsWith('m')==false) && (SVG2[i][j].startsWith('M')==false)){
       SVG2[i][j] = ("m" + SVG2[i][j])
       }
-      if((SVG2[i][j].endsWith('z')==false) || (SVG2[i][j].startsWith('Z')==false)){
+      if((SVG2[i][j].endsWith('z')==false) && (SVG2[i][j].startsWith('Z')==false)){
       SVG2[i][j] = (SVG2[i][j]+'z')
       }
 
