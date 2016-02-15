@@ -162,45 +162,36 @@ void setup(){
 }
 
 void draw(){
-background(235);
+   background(235);
+   size($(window).innerWidth()-30,$(window).innerHeight()-180);
+   sf=(height/((ymax-ymin)+20))
+   strokeWeight(1);
+   scale(sf);
+   translate(-xmin+10,-ymin+10);
+   stroke(0);
+   fill(0,0,200,110);
 
-
-size($(window).innerWidth()-30,$(window).innerHeight()-180);
-
-sf=(height/((ymax-ymin)+20))
-strokeWeight(1);
-
-
-
-
-scale(sf);
-
-
-translate(-xmin+10,-ymin+10);
-
-
-stroke(0);
-fill(0,0,200,110);
-
-
-for(i=0;i<dots.length;i++){
-beginShape();
-   for(j=0;j<dots[i].length;j++){
-           vertex(dots[i][j].X,dots[i][j].Y);
+   for(i=0;i<dots.length;i++){
+   beginShape();
+      for(j=0;j<dots[i].length;j++){
+//              stroke(255,0,0);
+//              ellipse(dots[i][j].X,dots[i][j].Y,3,3);
+              stroke(0);
+              vertex(dots[i][j].X,dots[i][j].Y);
+      }
+   endShape();
    }
-endShape();
-}
 
-stroke(0,80);
+   stroke(0,80);
 
-noFill();
-beginShape();
-vertex(xmin,ymin);
-vertex(xmax,ymin);
-vertex(xmax,ymax);
-vertex(xmin,ymax);
-vertex(xmin,ymin);
-endShape();
+   noFill();
+   beginShape();
+      vertex(xmin,ymin);
+      vertex(xmax,ymin);
+      vertex(xmax,ymax);
+      vertex(xmin,ymax);
+      vertex(xmin,ymin);
+   endShape();
 
 textSize(14/sf);
 
@@ -218,19 +209,18 @@ ellipse(xmin,ymax,5,5);
 <script>
 
 var g = ""
-
-var points = []
-var tool_diameter
+var dots = []
 var SVG = []
-
+var SVG2 = []
+var dots = []
+var image = ({name:"cat.svg"})
 var xmin
 var xmax
 var ymin
 var ymax
-var dots = []
-var image = ({name:"cat.svg"})
 var sf2 = 1
 var target_width
+var tool_diameter
 
 function make(){
 
@@ -260,7 +250,6 @@ g+="g0z3\n"
 
 }
 
-
 g+="m5\n"
 g+="m30\n"
 
@@ -278,19 +267,12 @@ fabmo.submitJob({
 function info(){
 
 console.log(SVG[0])
-
-if(image!=null){
-   alert(image.name + "\nwidth: " + ((xmax-xmin)/sf2).toFixed(2) + " mm\nheight: " + ((ymax-ymin)/sf2).toFixed(2) + " mm")
-}
-else{
-   alert('no image loaded')
-}
+alert(image.name + "\nwidth: " + ((xmax-xmin)/sf2).toFixed(2) + " mm\nheight: " + ((ymax-ymin)/sf2).toFixed(2) + " mm")
 
 }
 
 function load(){
 
-//alert("svgcode")
 svg2pg()
 
 }
@@ -323,7 +305,6 @@ function addImg(imgsrc) {
 SVG2 = imgsrc.target.result
 SVG2 = SVG2.slice(SVG2.indexOf(",")+1)
 SVG2 = window.atob(SVG2)
-
 SVG2 = SVG2.slice((SVG2.indexOf('<svg')),(SVG2.indexOf('</svg>'))+6)
 SVG2 = SVG2.replace('<svg','<svg id="svg"')
 
@@ -342,12 +323,11 @@ svg_paths=[]
 SVG = []
 SVG2 = []
 dots = []
-
+dots = []
 
 flatten(document.getElementById('svg'));
 
 //console.log(svg_paths)
-
 
    for(i=0;i<svg_paths.length;i++){
    SVG.push([])
@@ -358,12 +338,11 @@ flatten(document.getElementById('svg'));
       }
    }
  
-//console.log(SVG)
 svg_paths=[]
-//Raphael._pathToAbsolute(path_string_rel);
 for(i=0;i<SVG.length;i++){
     svg_paths[i]=Raphael._pathToAbsolute(SVG[i]);    
 }
+
 SVG=[]
 
    for(i=0;i<svg_paths.length;i++){
@@ -375,48 +354,39 @@ SVG=[]
       }
    }
 
+var curve
+var shape_no = 0
 
-//console.log(SVG)
+for(i=0;i<svg_paths.length;i++){
 
-for(i=0;i<SVG.length;i++){
-    SVG2.push(SVG[i].split(/.m./gi))     
-}
-
-SVG=[]
-
-for(i=0;i<SVG2.length;i++){
-   for(j=0;j<SVG2[i].length;j++){
-      
-      if((SVG2[i][j].startsWith('m')==false) && (SVG2[i][j].startsWith('M')==false)){
-      SVG2[i][j] = ("m" + SVG2[i][j])
-      }
-      if((SVG2[i][j].endsWith('z')==false) && (SVG2[i][j].endsWith('Z')==false)){
-      SVG2[i][j] = (SVG2[i][j]+'z')
-      }
-
-      SVG.push(SVG2[i][j])
-
+   for(j=0;j<svg_paths[i].length;j++){
+            if((svg_paths[i][j][0].startsWith('M')==true) || (svg_paths[i][j][0].startsWith('m')==true)){
+               dots.push([])
+               shape_no=dots.length-1
+               dots[shape_no].push({X:svg_paths[i][j][1],Y:svg_paths[i][j][2]})
+            }
+            else if((svg_paths[i][j][0].startsWith('L')==true) || (svg_paths[i][j][0].startsWith('l')==true)){
+               dots[shape_no].push({X:svg_paths[i][j][1],Y:svg_paths[i][j][2]})
+            }
+            else if((svg_paths[i][j][0].startsWith('Z')==false) && (svg_paths[i][j][0].startsWith('z')==false)){
+               curve = ""
+               for(j2=0;j2<svg_paths[i][j].length;j2++){
+                  curve +=(svg_paths[i][j][j2]+',')
+               }
+                  curve = "M," + (svg_paths[i][j-1][(svg_paths[i][j-1].length)-2]) + ',' + (svg_paths[i][j-1][(svg_paths[i][j-1].length)-1]) + ',' + curve
+                  
+               for(j2=0;j2<(parseInt(Snap.path.getTotalLength(curve)));j2=j2+1){
+                  dots[shape_no].push({X:Snap.path.getPointAtLength(curve, j2).x,Y:Snap.path.getPointAtLength(curve, j2).y})   
+               }
+            }
+            else if((svg_paths[i][j][0].startsWith('Z')==true) || (svg_paths[i][j][0].startsWith('z')==true)){
+                  dots[shape_no].push(dots[shape_no][0])           
+            }
    }
 
 }
 
-
-console.log(SVG[0])
-
-
-for(i=0;i<SVG.length;i++){
-
-   dots.push([])
-   //console.log(parseInt(Snap.path.getTotalLength(SVG[i])))   
-   for(j=0;j<(parseInt(Snap.path.getTotalLength(SVG[i])));j=j+3){
-      dots[i].push({X:Snap.path.getPointAtLength(SVG[i], j).x,Y:Snap.path.getPointAtLength(SVG[i], j).y})   
-   }
-
-dots[i].push({X:Snap.path.getPointAtLength(SVG[i], 0).x,Y:Snap.path.getPointAtLength(SVG[i], 0).y})
-
-}
-
-//console.log(dots)
+console.log(dots)
 
 xmin = []
 xmax = []
