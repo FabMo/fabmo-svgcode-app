@@ -345,15 +345,6 @@ for(i=0;i<SVG.length;i++){
 
 SVG=[]
 
-   for(i=0;i<svg_paths.length;i++){
-   SVG.push([])
-      for(j=0;j<svg_paths[i].length;j++){
-
-      SVG[i]+=(svg_paths[i][j])
-
-      }
-   }
-
 var curve
 var shape_no = 0
 
@@ -378,15 +369,19 @@ for(i=0;i<svg_paths.length;i++){
                for(j2=0;j2<(parseInt(Snap.path.getTotalLength(curve)));j2=j2+1){
                   dots[shape_no].push({X:Snap.path.getPointAtLength(curve, j2).x,Y:Snap.path.getPointAtLength(curve, j2).y})   
                }
+           
             }
-            else if((svg_paths[i][j][0].startsWith('Z')==true) || (svg_paths[i][j][0].startsWith('z')==true)){
-                  dots[shape_no].push(dots[shape_no][0])           
-            }
+
    }
 
 }
 
-console.log(dots)
+//close all paths
+for(i=0;i<dots.length;i++){
+   dots[i].push(dots[i][0])
+}
+
+//console.log(dots)
 
 xmin = []
 xmax = []
