@@ -211,7 +211,6 @@ ellipse(xmin,ymax,5,5);
 <script>
 
 var g = ""
-var dots = []
 var SVG = []
 var SVG2 = []
 var dots = []
@@ -221,20 +220,19 @@ var xmax
 var ymin
 var ymax
 var sf2 = 1
-var target_width
+var target_width = 100
 var tool_diameter
 
 function make(){
 
 //material = eval('({' + (document.getElementById("material").value) + '})')
 
-g=""
-
-g+="g21\n"
-g+="g0z5\n"
-g+="m4\n"
-g+="g4p2\n"
-g+="g1f1000\n"
+   g=""
+   g+="g21\n"
+   g+="g0z5\n"
+   g+="m4\n"
+   g+="g4p2\n"
+   g+="g1f1000\n"
 
 for(i=0;i<dots.length;i++){
 
@@ -252,38 +250,30 @@ g+="g0z3\n"
 
 }
 
-g+="m5\n"
-g+="m30\n"
-
-//console.log(g);
-
-fabmo.submitJob({
-   file : g,
-   filename : image.name + '.g',
-   name : image.name,
-   description : (((xmax-xmin)/sf2).toFixed(2))+" x "+(((ymax-ymin)/sf2).toFixed(2))+" mm"
-});
+   g+="m5\n"
+   g+="m30\n"
+   //console.log(g);
+   fabmo.submitJob({
+      file : g,
+      filename : image.name + '.g',
+      name : image.name,
+      description : (((xmax-xmin)/sf2).toFixed(2))+" x "+(((ymax-ymin)/sf2).toFixed(2))+" mm"
+   });
 
 }
 
 function info(){
-
-console.log(SVG[0])
-alert(image.name + "\nwidth: " + ((xmax-xmin)/sf2).toFixed(2) + " mm\nheight: " + ((ymax-ymin)/sf2).toFixed(2) + " mm")
-
+   console.log(SVG[0])
+   alert(image.name + "\noriginal size\nwidth: " + ((xmax-xmin)).toFixed(2) + "\nheight: " + ((ymax-ymin)).toFixed(2))
 }
 
 function load(){
-
-svg2pg()
-
+   svg2pg()
 }
 
 
 function startRead() {
     image = document.getElementById("file").files[0];
-   
-
     if (image) {
         if (image.type.match("/svg/*")) {
             getAsImage(image);
@@ -292,7 +282,6 @@ function startRead() {
               alert(image.name + " IS NOT A SVG FILE");
         }
     }
-
 }
 
 function getAsImage(readFile) {
@@ -303,33 +292,27 @@ function getAsImage(readFile) {
 
 function addImg(imgsrc) {
 
+   SVG2 = imgsrc.target.result
+   SVG2 = SVG2.slice(SVG2.indexOf(",")+1)
+   SVG2 = window.atob(SVG2)
+   SVG2 = SVG2.slice((SVG2.indexOf('<svg')),(SVG2.indexOf('</svg>'))+6)
+   SVG2 = SVG2.replace('<svg','<svg id="svg"')
 
-SVG2 = imgsrc.target.result
-SVG2 = SVG2.slice(SVG2.indexOf(",")+1)
-SVG2 = window.atob(SVG2)
-SVG2 = SVG2.slice((SVG2.indexOf('<svg')),(SVG2.indexOf('</svg>'))+6)
-SVG2 = SVG2.replace('<svg','<svg id="svg"')
+   //console.log(SVG2)
 
-//console.log(SVG2)
-
-$( "#svg" ).replaceWith(SVG2);
-
-svg2pg()
-
+   $( "#svg" ).replaceWith(SVG2);
+   svg2pg()
 }
 
 
 function svg2pg(){
 
-svg_paths=[]
-SVG = []
-SVG2 = []
-dots = []
-dots = []
-
-flatten(document.getElementById('svg'));
-
-//console.log(svg_paths)
+   svg_paths=[]
+   SVG = []
+   SVG2 = []
+   dots = []
+   flatten(document.getElementById('svg'));
+//   console.log(svg_paths)
 
    for(i=0;i<svg_paths.length;i++){
    SVG.push([])
@@ -339,19 +322,19 @@ flatten(document.getElementById('svg'));
 
       }
    }
+   console.log(SVG)
  
-svg_paths=[]
-for(i=0;i<SVG.length;i++){
-    svg_paths[i]=Raphael._pathToAbsolute(SVG[i]);    
-}
+   svg_paths=[]
+   for(i=0;i<SVG.length;i++){
+      svg_paths[i]=Raphael._pathToAbsolute(SVG[i]);    
+   }
 
-SVG=[]
+   SVG=[]
 
-var curve
-var shape_no = 0
+   var curve
+   var shape_no = 0
 
-for(i=0;i<svg_paths.length;i++){
-
+   for(i=0;i<svg_paths.length;i++){
    for(j=0;j<svg_paths[i].length;j++){
             if((svg_paths[i][j][0].startsWith('M')==true) || (svg_paths[i][j][0].startsWith('m')==true)){
                dots.push([])
@@ -373,10 +356,9 @@ for(i=0;i<svg_paths.length;i++){
                }
            
             }
-
    }
 
-}
+   }
 
 //close all paths
 for(i=0;i<dots.length;i++){
@@ -385,10 +367,10 @@ for(i=0;i<dots.length;i++){
 
 //console.log(dots)
 
-xmin = []
-xmax = []
-ymin = []
-ymax = []
+   xmin = []
+   xmax = []
+   ymin = []
+   ymax = []
 
    for(i=0;i<dots.length;i++){
       for(j=0;j<dots[i].length;j++){
@@ -398,13 +380,11 @@ ymax = []
       ymin.push(dots[i][j].Y)
       }
    }
-xmax = Math.max.apply(Math, xmax)
-xmin = Math.min.apply(Math, xmin)
-ymax = Math.max.apply(Math, ymax)
-ymin = Math.min.apply(Math, ymin)
-
-
-
+   xmax = Math.max.apply(Math, xmax)
+   xmin = Math.min.apply(Math, xmin)
+   ymax = Math.max.apply(Math, ymax)
+   ymin = Math.min.apply(Math, ymin)
+   sf2 = ((xmax-xmin)/target_width)
 }
 
 
@@ -424,7 +404,7 @@ $( "#resize" ).click(function() {
 
 // toggle full screen
 function toggleFullScreen() {
-  if (!document.fullscreenElement &&    // alternative standard method
+   if (!document.fullscreenElement &&    // alternative standard method
       !document.mozFullScreenElement && !document.webkitFullscreenElement) {  // current working methods
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen()
