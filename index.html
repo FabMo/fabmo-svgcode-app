@@ -12,10 +12,7 @@ SVGElement.prototype.getTransformToElement = SVGElement.prototype.getTransformTo
 
 
 <script src="js/jquery-1.11.2.min.js"></script>
-<script src="js/libs/fabmo.js"></script>
-    <script type="text/javascript">
-        var fabmo = new FabMoDashboard();
-    </script>
+<script src="js/libs/fabmo.min.js"></script>
 <script src="js/control.js"></script>
 <script src="js/config.js"></script>
 <script src="js/jquery.mobile-1.4.5.js"></script>
@@ -209,6 +206,9 @@ ellipse(xmin,ymax,5,5);
 
 <script>
 
+
+var fabmo = new FabMoDashboard()
+
 var g = ""
 var SVG = []
 var SVG2 = []
@@ -235,7 +235,7 @@ function make(){
    g=""
    g+="g21\n"
    g+="g0z5\n"
-   g+="m4\n"
+   g+="m3\n"
    g+="g4p2\n"
    g+="g1f500\n"
 
